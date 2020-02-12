@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.dbpedia.databus</groupId>
+    <artifactId>super-pom</artifactId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+  <groupId>dnb</groupId>
+  <artifactId>group-metadata</artifactId>
+  <version>2019.10.15</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>authorities</module>
+    <module>links</module>
+  </modules>
+  <properties>
+	  <databus.documentation>
+This is an experimental databus deployment of DNB (German National Library) open data 
+
+## Origin
+For more technical information on these datasets, please visit https://www.dnb.de/EN/Professionell/Standardisierung/GND/gnd_node.html
+
+## Changelog
+* 2019.06.13
+  * initial release
+</databus.documentation>
+    <databus.license>http://purl.oclc.org/NET/rdflicense/cc-zero1.0</databus.license>
+    <!--<databus.codeReference>https://github.com/dbpedia/extraction-framework/blob/master/core/src/main/scala/org/dbpedia/extraction/mappings/MappingExtractor.scala</databus.codeReference>
+    <databus.issueTracker>https://github.com/dbpedia/extraction-framework/issues</databus.issueTracker>
+    <databus.documentationLocation>https://github.com/dbpedia/databus-maven-plugin/blob/master/dbpedia/${project.groupId}/${project.artifactId}</databus.documentationLocation>
+    <databus.feedbackChannel>https://forum.dbpedia.org/c/databus-dbpedia/mappings</databus.feedbackChannel>-->
+    <databus.downloadUrlPath>http://dbpedia-mappings.tib.eu/databus-repo/jj-author/${project.groupId}/${project.artifactId}/${project.version}/</databus.downloadUrlPath>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <databus.packageDirectory>/var/www/dbpedia-mappings.tib.eu/databus-repo/jj-author/${project.groupId}/${project.artifactId}</databus.packageDirectory>
+    <!--<databus.tryVersionAsIssuedDate>true</databus.tryVersionAsIssuedDate>-->
+    <databus.publisher>https://jj-author.github.io/webid.ttl#this</databus.publisher>
+    <databus.maintainer>https://jj-author.github.io/webid.ttl#this</databus.maintainer>
+    <databus.pkcs12serverId>databus.jj-author</databus.pkcs12serverId>
+  </properties>
+  <repositories>
+    <repository>
+      <id>archiva.internal</id>
+      <name>Internal Release Repository</name>
+      <url>http://databus.dbpedia.org:8081/repository/internal</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <id>archiva.snapshots</id>
+      <name>Internal Snapshot Repository</name>
+      <url>http://databus.dbpedia.org:8081/repository/snapshots</url>
+    </repository>
+  </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.dbpedia.databus</groupId>
+        <artifactId>databus-derive-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>DeriveFromMarvin</id>
+            <goals>
+              <goal>clone</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+	  <skipParsing>false</skipParsing>
+	  <skipCloning>false</skipCloning>
+          <versions>
+            <version>https://databus.dbpedia.org/marvin/mappings/geo-coordinates-mappingbased/${databus.deriveversion}</version>
+            <version>https://databus.dbpedia.org/marvin/mappings/instance-types/${databus.deriveversion}</version>
+            <version>https://databus.dbpedia.org/marvin/mappings/mappingbased-literals/${databus.deriveversion}</version>
+            <version>https://databus.dbpedia.org/marvin/mappings/mappingbased-objects-uncleaned/${databus.deriveversion}</version>
+            <version>https://databus.dbpedia.org/marvin/mappings/mappingbased-objects/${databus.deriveversion}</version>
+            <version>https://databus.dbpedia.org/marvin/mappings/specific-mappingbased-properties/${databus.deriveversion}</version>
+          </versions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+   <profile>  <!--- call with mvn exec:exec -P download-dnb --> 
+      <id>download-dnb</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.2</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>./download.sh</executable>
+              <arguments>
+                <argument>${project.groupId}</argument>
+                <argument>${project.artifactId}</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  <profile>  <!--- call with mvn exec:exec -P download-dnb -->
+      <id>prepare-dnb-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.2</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>./prepare-release.sh</executable>
+              <arguments>
+                <argument>${project.version}</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+</project>
