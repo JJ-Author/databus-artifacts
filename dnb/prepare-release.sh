@@ -10,6 +10,15 @@ if [[ -z $1 ]]; then
 		                exit 1
 			fi
 
+function require_cmd () {
+	if ! [ -x "$(command -v git)" ]; then
+	       	echo "Error: $1 is not installed." >&2
+		exit 1
+	fi
+}
+
+require_cmd "rdf2rdf"
+require_cmd "lbzip2"
 
 ####### convert files to ntriples
 

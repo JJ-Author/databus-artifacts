@@ -9,7 +9,7 @@
   </parent>
   <groupId>dnb</groupId>
   <artifactId>group-metadata</artifactId>
-  <version>2019.10.15</version>
+  <version>2020.02.13</version>
   <packaging>pom</packaging>
   <modules>
     <module>authorities</module>
@@ -84,8 +84,8 @@ For more technical information on these datasets, please visit https://www.dnb.d
     </plugins>
   </build>
   <profiles>
-   <profile>  <!--- call with mvn exec:exec -P download-dnb --> 
-      <id>download-dnb</id>
+   <profile>  <!--- call e.g. with mvn test -P fetch-release or in one go release: mvn deploy -P fetch-release; call individual executions with mvn exec:exec@id -P fetch-release  --> 
+      <id>fetch-release</id>
       <build>
         <plugins>
           <plugin>
@@ -93,48 +93,38 @@ For more technical information on these datasets, please visit https://www.dnb.d
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.3.2</version>
             <executions>
-              <execution>
+	      <execution>
+		<id>download-sources</id>
+		<phase>generate-sources</phase>
+		<inherited>false</inherited>
                 <goals>
                   <goal>exec</goal>
                 </goals>
-              </execution>
-            </executions>
             <configuration>
-              <executable>./download.sh</executable>
+              <executable>./download-sources.sh</executable>
               <arguments>
-                <argument>${project.groupId}</argument>
-                <argument>${project.artifactId}</argument>
+                <argument>${project.version}</argument>
               </arguments>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  <profile>  <!--- call with mvn exec:exec -P download-dnb -->
-      <id>prepare-dnb-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <executions>
-              <execution>
+             </configuration>
+              </execution>
+	      <execution>
+		<id>prepare-release</id>
+		<phase>process-sources</phase>
+		<inherited>false</inherited>
                 <goals>
                   <goal>exec</goal>
                 </goals>
-              </execution>
-            </executions>
             <configuration>
               <executable>./prepare-release.sh</executable>
               <arguments>
                 <argument>${project.version}</argument>
               </arguments>
-            </configuration>
+             </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
     </profile>
-
   </profiles>
 </project>
