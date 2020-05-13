@@ -11,7 +11,7 @@ if [[ -z $1 ]]; then
 			fi
 
 function require_cmd () {
-	if ! [ -x "$(command -v git)" ]; then
+	if ! [ -x "$(command -v $1)" ]; then
 	       	echo "Error: $1 is not installed." >&2
 		exit 1
 	fi
